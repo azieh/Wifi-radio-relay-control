@@ -8,10 +8,10 @@ const char *Switch2_OFF = "0110101000101100000000110";
 const char *Switch3_OFF = "0110101000101100000001010";
 void SetupRadioTransmiter()
 {
-	mySwitch.enableReceive(4);  //D2 Lolin
-	mySwitch.enableTransmit(5); //D1 Lolin
+	mySwitch.enableReceive(4);  //D2 Lolin I/O
+	mySwitch.enableTransmit(5); //D1 Lolin I/O
 	mySwitch.setPulseLength(300);
-	mySwitch.setRepeatTransmit(15);
+	mySwitch.setRepeatTransmit(15); // in case of lost signals
 }
 
 void TransmiterLoop(int behavior)

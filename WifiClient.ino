@@ -2,9 +2,10 @@
 extern "C" {
 #include "user_interface.h"
 }
-const char *ssid = "eeeeChodzTu";
-const char *password = "wasylwasyl666";
-IPAddress ip(192, 168, 1, 250);
+const char *ssid = "** your WiFi ssid **";
+const char *password = "** your WiFi password **";
+//You can comment IPAddress variables to use DHCP values
+IPAddress ip(192, 168, 1, 250); // static IP address of ESP 8266
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 
@@ -56,9 +57,16 @@ int WifiLoop()
 
 	// Wait until the client sends some data
 	Serial.println("New client is comming");
+	int clientTry = 0;
 	while (!client.available())
 	{
+		clientTry++;
 		delay(100);
+		if(clientTry == 5)
+		{
+			client.stop();
+			return -99;
+		}
 	}
 
 	// Read the first line of the request
@@ -116,6 +124,7 @@ int WifiLoop()
 	// Send the response to the client
 	client.print(html);
 	delay(100);
+	client.stop();
 	Serial.println("Data readed and client disonnected");
 	return val;
 }
