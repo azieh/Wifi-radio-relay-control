@@ -2,8 +2,8 @@
 extern "C" {
 #include "user_interface.h"
 }
-const char* ssid = "eeeeChodzTu";
-const char* password = "wasylwasyl666";
+const char *ssid = "eeeeChodzTu";
+const char *password = "wasylwasyl666";
 IPAddress ip(192, 168, 1, 250);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
@@ -23,12 +23,13 @@ void SetupWifi()
 	WiFi.config(ip, gateway, subnet);
 	Serial.print("Connecting to ");
 	Serial.println(ssid);
-  WiFi.hostname("MyLolin");
-  uint8_t mac[] = {0x42, 0x3C, 0x42, 0x3C, 0x42, 0x3C};
-  wifi_set_macaddr(STATION_IF, mac);
+	WiFi.hostname("MyLolin");
+	uint8_t mac[] = {0x42, 0x3C, 0x42, 0x3C, 0x42, 0x3C};
+	wifi_set_macaddr(STATION_IF, mac);
 	WiFi.begin(ssid, password);
 
-	while (WiFi.status() != WL_CONNECTED) {
+	while (WiFi.status() != WL_CONNECTED)
+	{
 		delay(500);
 		Serial.print(".");
 	}
@@ -48,13 +49,15 @@ int WifiLoop()
 	// Check if a client has connected
 	WiFiClient client = server.available();
 
-	if (!client) {
+	if (!client)
+	{
 		return -99;
 	}
 
 	// Wait until the client sends some data
 	Serial.println("New client is comming");
-	while (!client.available()) {
+	while (!client.available())
+	{
 		delay(100);
 	}
 
@@ -63,44 +66,56 @@ int WifiLoop()
 	client.flush();
 
 	int val;
-	if (req.indexOf("/"+ switch1Name +"/0") != -1){
+	if (req.indexOf("/" + switch1Name + "/0") != -1)
+	{
+		Serial.println("Turn off " + switch1Name);
 		val = 10;
-   switch1State = false;
+		switch1State = false;
 	}
-	else if (req.indexOf("/"+ switch1Name +"/1") != -1){
+	else if (req.indexOf("/" + switch1Name + "/1") != -1)
+	{
+		Serial.println("Turn on " + switch1Name);
 		val = 11;
-   switch1State = true;
+		switch1State = true;
 	}
-  if (req.indexOf("/"+ switch2Name +"/0") != -1){
-    val = 20;
-    switch2State = false;
-  }
-  else if (req.indexOf("/"+ switch2Name +"/1") != -1){
-    val = 21;
-    switch2State = true;
-  }
-  if (req.indexOf("/"+ switch3Name +"/0") != -1){
-    val = 30;
-    switch3State = false;
-  }
-  else if (req.indexOf("/"+ switch3Name +"/1") != -1){
-    val = 31;
-    switch3State = true;
-  }
-	else {
+	else if (req.indexOf("/" + switch2Name + "/0") != -1)
+	{
+		Serial.println("Turn off " + switch2Name);
+		val = 20;
+		switch2State = false;
+	}
+	else if (req.indexOf("/" + switch2Name + "/1") != -1)
+	{
+		Serial.println("Turn on " + switch2Name);
+		val = 21;
+		switch2State = true;
+	}
+	else if (req.indexOf("/" + switch3Name + "/0") != -1)
+	{
+		Serial.println("Turn off " + switch3Name);
+		val = 30;
+		switch3State = false;
+	}
+	else if (req.indexOf("/" + switch3Name + "/1") != -1)
+	{
+		Serial.println("Turn on " + switch3Name);
+		val = 31;
+		switch3State = true;
+	}
+	else
+	{
 		Serial.println("Empty request");
 		val = -99;
 	}
- //Build HTML
- String html = htmlHead1 + htmlLoadBootstrapCss + htmlHead2;
-  html += htmlSwitchButtonGroup(switch1Name, switch1State);
-  html += htmlSwitchButtonGroup(switch2Name, switch2State);
-  html += htmlSwitchButtonGroup(switch3Name, switch3State);
-  html += htmlEnd;
+	//Build HTML
+	String html = htmlOpen +
+			htmlSwitchButtonGroup(switch1Name, switch1State) +
+			htmlSwitchButtonGroup(switch2Name, switch2State) +
+			htmlSwitchButtonGroup(switch3Name, switch3State) +
+			htmlClose;
 	// Send the response to the client
 	client.print(html);
 	delay(100);
-  client.stop();
 	Serial.println("Data readed and client disonnected");
 	return val;
 }

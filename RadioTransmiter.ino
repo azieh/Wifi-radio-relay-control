@@ -1,14 +1,14 @@
 #include <RCSwitch.h>
 RCSwitch mySwitch = RCSwitch();
-const char* Gniazdko1_ON = "0110101000101100000011110";
-const char* Gniazdko2_ON = "0110101000101100000010110";
-const char* Gniazdko3_ON = "0110101000101100000011010";
-const char* Gniazdko1_OFF = "0110101000101100000001110";
-const char* Gniazdko2_OFF = "0110101000101100000000110";
-const char* Gniazdko3_OFF = "0110101000101100000001010";
+const char *Switch1_ON = "0110101000101100000011110";
+const char *Switch2_ON = "0110101000101100000010110";
+const char *Switch3_ON = "0110101000101100000011010";
+const char *Switch1_OFF = "0110101000101100000001110";
+const char *Switch2_OFF = "0110101000101100000000110";
+const char *Switch3_OFF = "0110101000101100000001010";
 void SetupRadioTransmiter()
 {
-	mySwitch.enableReceive(4); //D2 Lolin
+	mySwitch.enableReceive(4);  //D2 Lolin
 	mySwitch.enableTransmit(5); //D1 Lolin
 	mySwitch.setPulseLength(300);
 	mySwitch.setRepeatTransmit(15);
@@ -18,15 +18,51 @@ void TransmiterLoop(int behavior)
 {
 	switch (behavior)
 	{
-	case 0:
-		Serial.println("Gniazdko1_OFF");
-		mySwitch.send(Gniazdko1_OFF);
+	case 10:
+		mySwitch.send(Switch1_OFF);
 		break;
-	case 1:
-		Serial.println("Gniazdko1_ON");
-		mySwitch.send(Gniazdko1_ON);
+	case 11:
+		mySwitch.send(Switch1_ON);
+		break;
+	case 20:
+		mySwitch.send(Switch2_OFF);
+		break;
+	case 21:
+		mySwitch.send(Switch2_ON);
+		break;
+	case 30:
+		mySwitch.send(Switch3_OFF);
+		break;
+	case 31:
+		mySwitch.send(Switch3_ON);
 		break;
 	default:
 		return;
+	}
+}
+
+void ListenForRfSignals()
+{
+	if (mySwitch.available())
+	{
+
+		int value = mySwitch.getReceivedValue();
+
+		if (value == 0)
+		{
+			Serial.print("Unknown encoding");
+		}
+		else
+		{
+			output(
+				mySwitch.getReceivedValue(),
+				mySwitch.getReceivedBitlength(),
+				mySwitch.getReceivedDelay(),
+				mySwitch.getReceivedRawdata(),
+				mySwitch.getReceivedProtocol()
+			);
+		}
+
+		mySwitch.resetAvailable();
 	}
 }
